@@ -1,0 +1,1130 @@
+{
+  "name": "Global Remote Job Engine — Production Ready",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "minutesInterval": 24
+            }
+          ]
+        }
+      },
+      "id": "node-sched-24",
+      "name": "Every 24 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "minutesInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "node-sched-6",
+      "name": "Every 6 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "id"
+        },
+        "filtersUI": {},
+        "options": {}
+      },
+      "id": "node-read-sheet",
+      "name": "Load Already-Applied URLs",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        240,
+        380
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "CRED_GSHEETS",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/actor-tasks/APIFY_TASK_LINKEDIN/runs",
+        "sendQueryParameters": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "APIFY_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"searchKeywords\": \"Cybersecurity SOC AI Automation MLOps\",\n  \"location\": \"Worldwide\",\n  \"remote\": true,\n  \"count\": 50\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "node-trigger-li",
+      "name": "Start LinkedIn Scraper",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        60
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/actor-tasks/APIFY_TASK_INDEED/runs",
+        "sendQueryParameters": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "APIFY_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"searchQuery\": \"Cybersecurity SOC AI MLOps Engineer\",\n  \"location\": \"Remote\",\n  \"maxItems\": 50\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "node-trigger-indeed",
+      "name": "Start Indeed Scraper",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        180
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/actor-tasks/APIFY_TASK_DICE/runs",
+        "sendQueryParameters": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "APIFY_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"searchKeywords\": \"Cybersecurity SIEM SOC MLOps AI Automation\",\n  \"location\": \"Remote\",\n  \"maxItems\": 40\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "node-trigger-dice",
+      "name": "Start Dice Scraper",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        300
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://serpapi.com/search",
+        "sendQueryParameters": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "engine",
+              "value": "google_jobs"
+            },
+            {
+              "name": "q",
+              "value": "Cybersecurity SOC AI MLOps engineer remote worldwide"
+            },
+            {
+              "name": "ltype",
+              "value": "1"
+            },
+            {
+              "name": "api_key",
+              "value": "SERPAPI_KEY"
+            },
+            {
+              "name": "num",
+              "value": "20"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "id": "node-google-jobs",
+      "name": "Google Jobs via SerpAPI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        420
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://remotive.com/api/remote-jobs",
+        "sendQueryParameters": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "category",
+              "value": "software-dev"
+            },
+            {
+              "name": "search",
+              "value": "cybersecurity SOC AI automation MLOps"
+            },
+            {
+              "name": "limit",
+              "value": "50"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "node-remotive",
+      "name": "Remotive API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        540
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://www.arbeitnow.com/api/job-board-api",
+        "sendQueryParameters": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "search",
+              "value": "cybersecurity AI automation MLOps"
+            },
+            {
+              "name": "remote",
+              "value": "true"
+            },
+            {
+              "name": "page",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "node-arbeitnow",
+      "name": "Arbeitnow API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        660
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://jobicy.com/api/v2/remote-jobs",
+        "sendQueryParameters": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "count",
+              "value": "50"
+            },
+            {
+              "name": "tag",
+              "value": "cybersecurity,automation,mlops,soc,siem,python"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "node-jobicy",
+      "name": "Jobicy API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        780
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://weworkremotely.com/categories/remote-devops-sysadmin-jobs.rss"
+      },
+      "id": "node-wwr-devops",
+      "name": "WWR DevOps RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        900
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://weworkremotely.com/categories/remote-programming-jobs.rss"
+      },
+      "id": "node-wwr-prog",
+      "name": "WWR Programming RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        1020
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Wait until all Apify async runs complete, then merge ALL sources into one list\nconst APIFY_TOKEN = 'APIFY_TOKEN';\n\n// Get run IDs from the Apify trigger nodes\nconst liRun    = $('Start LinkedIn Scraper').first()?.json?.data?.id   || null;\nconst indRun   = $('Start Indeed Scraper').first()?.json?.data?.id    || null;\nconst diceRun  = $('Start Dice Scraper').first()?.json?.data?.id      || null;\n\nasync function runStatus(runId) {\n  if (!runId) return { done: true, datasetId: null };\n  const r = await fetch(`https://api.apify.com/v2/actor-runs/${runId}?token=${APIFY_TOKEN}`);\n  const j = await r.json();\n  const s = j?.data?.status || 'UNKNOWN';\n  return { done: s === 'SUCCEEDED' || s === 'FAILED', datasetId: j?.data?.defaultDatasetId || null };\n}\n\nasync function fetchDataset(datasetId, sourceName) {\n  if (!datasetId) return [];\n  const r = await fetch(`https://api.apify.com/v2/datasets/${datasetId}/items?token=${APIFY_TOKEN}&clean=true&format=json`);\n  const arr = await r.json();\n  return Array.isArray(arr) ? arr.map(i => ({ ...i, _src: sourceName })) : [];\n}\n\n// Check statuses\nconst [liStatus, indStatus, diceStatus] = await Promise.all([\n  runStatus(liRun), runStatus(indRun), runStatus(diceRun)\n]);\n\n// If any Apify run is still running, signal retry\nif (!liStatus.done || !indStatus.done || !diceStatus.done) {\n  return [{ json: { _retry: true } }];\n}\n\n// Fetch Apify results\nconst [liItems, indItems, diceItems] = await Promise.all([\n  fetchDataset(liStatus.datasetId, 'linkedin'),\n  fetchDataset(indStatus.datasetId, 'indeed'),\n  fetchDataset(diceStatus.datasetId, 'dice')\n]);\n\n// Pull synchronous source results\nconst serpRaw     = $('Google Jobs via SerpAPI').first()?.json?.jobs_results  || [];\nconst remRaw      = $('Remotive API').first()?.json?.jobs                     || [];\nconst arbRaw      = $('Arbeitnow API').first()?.json?.data                    || [];\nconst jobicyRaw   = $('Jobicy API').first()?.json?.jobs                       || [];\nconst wwrDevRaw   = $('WWR DevOps RSS').all()?.map(i => i.json)               || [];\nconst wwrProgRaw  = $('WWR Programming RSS').all()?.map(i => i.json)          || [];\n\nconst serpItems  = Array.isArray(serpRaw)  ? serpRaw.map(i  => ({ ...i,  _src: 'google_jobs' })) : [];\nconst remItems   = Array.isArray(remRaw)   ? remRaw.map(i   => ({ ...i,  _src: 'remotive'    })) : [];\nconst arbItems   = Array.isArray(arbRaw)   ? arbRaw.map(i   => ({ ...i,  _src: 'arbeitnow'   })) : [];\nconst jobicyItems= Array.isArray(jobicyRaw)? jobicyRaw.map(i=> ({ ...i,  _src: 'jobicy'      })) : [];\nconst wwrDev     = Array.isArray(wwrDevRaw)? wwrDevRaw.map(i=> ({ ...i,  _src: 'wwr'         })) : [];\nconst wwrProg    = Array.isArray(wwrProgRaw)?wwrProgRaw.map(i=>({ ...i,  _src: 'wwr'         })) : [];\n\nconst all = [...liItems, ...indItems, ...diceItems, ...serpItems, ...remItems, ...arbItems, ...jobicyItems, ...wwrDev, ...wwrProg];\n\nif (all.length === 0) return [{ json: { _empty: true } }];\nreturn all.map(item => ({ json: item }));"
+      },
+      "id": "node-poll-merge",
+      "name": "Poll Apify + Merge All Sources",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        760,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 30,
+        "unit": "seconds"
+      },
+      "id": "node-wait",
+      "name": "Wait 30s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        760,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalise schema + deduplicate + hard remote filter\nconst REMOTE_SIGNALS = [\n  'remote','work from home','wfh','fully remote','100% remote',\n  'anywhere','worldwide','distributed','telecommute','virtual',\n  'location independent','global remote','no office'\n];\n\n// Build set of already-applied URLs from the sheet\nconst appliedUrls = new Set(\n  ($('Load Already-Applied URLs').all() || [])\n    .map(i => (i.json['Target URL'] || i.json.targetUrl || '').trim())\n    .filter(Boolean)\n);\n\nconst sessionSeen = new Set();\nconst results = [];\n\nfor (const item of $input.all()) {\n  const d = item.json;\n  if (d._retry || d._empty) continue;\n\n  const src = d._src || 'unknown';\n  let title = '', company = '', location = '', description = '', applyUrl = '', salary = '';\n\n  // Normalise by source\n  if (src === 'linkedin') {\n    title = d.title; company = d.companyName; location = d.location;\n    description = d.descriptionText || d.description || '';\n    applyUrl = d.applyUrl || d.url || '';\n\n  } else if (src === 'indeed') {\n    title = d.title || d.jobTitle; company = d.company || d.employer || d.companyName;\n    location = d.location || d.jobLocation;\n    description = d.description || d.jobDescription || '';\n    applyUrl = d.url || d.jobUrl || '';\n\n  } else if (src === 'dice') {\n    title = d.title; company = d.companyName || d.company;\n    location = d.location || 'Remote';\n    description = d.descriptionFragment || d.description || '';\n    applyUrl = d.applyUrl || d.detailUrl || d.url || '';\n\n  } else if (src === 'google_jobs') {\n    title = d.title; company = d.company_name;\n    location = d.location;\n    description = d.description || (d.detected_extensions ? JSON.stringify(d.detected_extensions) : '') || '';\n    applyUrl = (d.related_links && d.related_links[0] && d.related_links[0].link) || d.share_link || '';\n\n  } else if (src === 'remotive') {\n    title = d.title; company = d.company_name;\n    location = d.candidate_required_location || 'Remote';\n    description = d.description || ''; applyUrl = d.url || ''; salary = d.salary || '';\n\n  } else if (src === 'arbeitnow') {\n    title = d.title; company = d.company_name;\n    location = d.location || 'Remote';\n    description = d.description || ''; applyUrl = d.url || '';\n\n  } else if (src === 'jobicy') {\n    title = d.jobTitle; company = d.companyName;\n    location = d.jobGeo || 'Worldwide';\n    description = d.jobExcerpt || d.jobDescription || ''; applyUrl = d.url || '';\n\n  } else if (src === 'wwr') {\n    title = d.title; company = d.creator || d.author || '';\n    location = 'Remote';\n    description = d.contentSnippet || d.content || ''; applyUrl = d.link || d.guid || '';\n\n  } else {\n    title = d.title || d.jobTitle; company = d.company || d.companyName;\n    location = d.location || 'Remote';\n    description = d.description || ''; applyUrl = d.url || d.applyUrl || '';\n  }\n\n  // Skip incomplete records\n  if (!title || !applyUrl) continue;\n\n  // REMOTE HARD FILTER\n  const searchable = (title + ' ' + location + ' ' + description).toLowerCase();\n  const isRemote = REMOTE_SIGNALS.some(s => searchable.includes(s));\n  if (!isRemote) continue;\n\n  // DEDUPLICATION\n  const urlKey = applyUrl.trim();\n  if (appliedUrls.has(urlKey) || sessionSeen.has(urlKey)) continue;\n  sessionSeen.add(urlKey);\n\n  results.push({\n    json: {\n      title:       (title   || '').trim().substring(0, 200),\n      company:     (company || '').trim().substring(0, 200),\n      location:    (location|| 'Remote').trim(),\n      description: (description || '').replace(/<[^>]+>/g, ' ').trim().substring(0, 3500),\n      applyUrl:    urlKey,\n      source:      src,\n      salary:      (salary || '').trim()\n    }\n  });\n}\n\nreturn results.length > 0 ? results : [{ json: { _empty: true } }];"
+      },
+      "id": "node-normalise",
+      "name": "Normalise + Dedup + Remote Filter",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1020,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "empty-check",
+              "leftValue": "={{ $json._empty }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "node-skip-empty",
+      "name": "Skip If No New Jobs",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1260,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "ANTHROPIC_API_KEY"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-haiku-4-5-20251001\",\n  \"max_tokens\": 1024,\n  \"system\": \"You are a senior ATS-expert technical recruiter. You MUST return ONLY a raw JSON object. No markdown, no backticks, no explanation before or after. Just the JSON object.\",\n  \"messages\": [{\n    \"role\": \"user\",\n    \"content\": \"Analyse this job listing against the candidate profile below and return a JSON evaluation.\\n\\nJOB LISTING:\\nTitle: {{ $json.title }}\\nCompany: {{ $json.company }}\\nLocation: {{ $json.location }}\\nSalary: {{ $json.salary || 'Not stated' }}\\nDescription (first 2000 chars):\\n{{ $json.description.substring(0, 2000) }}\\n\\nCANDIDATE PROFILE:\\n- Cybersecurity: SOC operations, SIEM platforms (LogRhythm, Snort), network isolation, incident response, threat hunting\\n- Automation Engineering: n8n workflow engineering, enterprise automation pipelines, Python scripting, worker dashboarding\\n- AI / MLOps: PyTorch, TensorFlow, LangChain, MLOps pipeline deployment, AI framework integration\\n- Experience: 5+ years across above domains\\n- Work preference: Fully remote only, available worldwide, flexible across all timezones\\n\\nRETURN ONLY THIS JSON OBJECT (no markdown, no backticks):\\n{\\\"score\\\": <integer 1-10>, \\\"justification\\\": \\\"<one sentence why this score>\\\", \\\"isEasyApply\\\": <true or false>, \\\"atsKeywords\\\": [\\\"<up to 8 exact phrases from the job description to mirror verbatim>\\\"], \\\"missingSkills\\\": [\\\"<up to 3 skills in JD not in candidate profile>\\\"], \\\"estimatedSalaryUSD\\\": <annual USD integer or null>, \\\"remoteVerified\\\": <true only if JD explicitly states fully remote or worldwide or no location required>, \\\"coverLetterParagraph\\\": \\\"<Write 120-140 words. Open with the candidate's single most relevant achievement for this specific role. Weave in at least 3 ATS keywords naturally. Mention timezone flexibility and remote-first work style. Sound like a senior professional wrote it, not a template.>\\\"}\"\n  }]\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "node-claude-score",
+      "name": "Claude AI — Score + Cover Letter",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1500,
+        480
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Claude API response safely\nconst item   = $input.first();\nconst raw    = item.json;\nconst jobData = $('Normalise + Dedup + Remote Filter').item?.json || {};\n\n// Claude API shape: raw.content[0].text\nlet text = '';\nif (Array.isArray(raw.content) && raw.content[0]?.text) {\n  text = raw.content[0].text;\n} else if (typeof raw.text === 'string') {\n  text = raw.text;\n} else {\n  text = JSON.stringify(raw);\n}\n\n// Strip accidental markdown fences\ntext = text.replace(/^```json\\s*/i, '').replace(/^```\\s*/i, '').replace(/\\s*```$/i, '').trim();\n\nlet parsed = {};\ntry {\n  parsed = JSON.parse(text);\n} catch (e) {\n  // Fallback — try to extract JSON with regex\n  const match = text.match(/\\{[\\s\\S]*\\}/);\n  if (match) {\n    try { parsed = JSON.parse(match[0]); } catch (_) {}\n  }\n  if (!parsed.score) {\n    parsed = { score: 0, justification: 'Parse failed: ' + e.message, isEasyApply: false, atsKeywords: [], missingSkills: [], estimatedSalaryUSD: null, remoteVerified: false, coverLetterParagraph: '', _error: true };\n  }\n}\n\nreturn [{ json: {\n  // Job fields\n  title:                jobData.title                || '',\n  company:              jobData.company              || '',\n  location:             jobData.location             || '',\n  description:          jobData.description          || '',\n  applyUrl:             jobData.applyUrl             || '',\n  source:               jobData.source               || '',\n  salary:               jobData.salary               || '',\n  // AI fields\n  score:                typeof parsed.score === 'number' ? parsed.score : 0,\n  justification:        typeof parsed.justification  === 'string' ? parsed.justification : '',\n  isEasyApply:          parsed.isEasyApply           === true,\n  atsKeywords:          Array.isArray(parsed.atsKeywords)   ? parsed.atsKeywords  : [],\n  missingSkills:        Array.isArray(parsed.missingSkills) ? parsed.missingSkills : [],\n  estimatedSalaryUSD:   typeof parsed.estimatedSalaryUSD === 'number' ? parsed.estimatedSalaryUSD : null,\n  remoteVerified:       parsed.remoteVerified        === true,\n  coverLetterParagraph: typeof parsed.coverLetterParagraph === 'string' ? parsed.coverLetterParagraph : '',\n  _aiError:             parsed._error                || false\n}}];"
+      },
+      "id": "node-parse-ai",
+      "name": "Parse Claude Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1740,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "remote-verified-check",
+              "leftValue": "={{ $json.remoteVerified }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "node-remote-gate",
+      "name": "Is Remote Verified?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1980,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "score-high",
+              "leftValue": "={{ $json.score }}",
+              "rightValue": 8,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "node-score-tier1",
+      "name": "Score ≥ 8 — Auto Apply?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2220,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "score-mid",
+              "leftValue": "={{ $json.score }}",
+              "rightValue": 6,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "node-score-tier2",
+      "name": "Score 6-7 — Review Queue?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2220,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://YOUR_PLAYWRIGHT_SERVICE/apply",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer PLAYWRIGHT_SERVICE_TOKEN"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"targetUrl\": {{ JSON.stringify($json.applyUrl) }},\n  \"resumeUrl\": \"https://YOUR_BUCKET/resume.pdf\",\n  \"coverLetterText\": {{ JSON.stringify($json.coverLetterParagraph) }},\n  \"applicant\": {\n    \"name\":     \"YOUR_FULL_NAME\",\n    \"email\":    \"YOUR_EMAIL\",\n    \"phone\":    \"YOUR_PHONE\",\n    \"linkedin\": \"YOUR_LINKEDIN_URL\",\n    \"location\": \"Remote — Available Worldwide\"\n  },\n  \"stealth\": {\n    \"proxyRotation\":     true,\n    \"humanDelays\":       true,\n    \"screenshotOnFail\":  true,\n    \"maxRetries\":        2\n  },\n  \"jobMeta\": {\n    \"title\":   {{ JSON.stringify($json.title)   }},\n    \"company\": {{ JSON.stringify($json.company) }},\n    \"source\":  {{ JSON.stringify($json.source)  }}\n  }\n}",
+        "options": {
+          "timeout": 90000
+        }
+      },
+      "id": "node-playwright",
+      "name": "Playwright Apply Engine",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2460,
+        280
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ new Date().toISOString() }}",
+            "Status": "AUTO_SUBMITTED",
+            "Company": "={{ $json.company }}",
+            "Role": "={{ $json.title }}",
+            "Location": "={{ $json.location }}",
+            "Score": "={{ $json.score }}",
+            "Est Salary USD": "={{ $json.estimatedSalaryUSD ?? 'Unknown' }}",
+            "Source": "={{ $json.source }}",
+            "ATS Keywords": "={{ ($json.atsKeywords  || []).join(', ') }}",
+            "Missing Skills": "={{ ($json.missingSkills|| []).join(', ') }}",
+            "Apply Result": "={{ $node['Playwright Apply Engine'].json.status ?? 'sent' }}",
+            "Target URL": "={{ $json.applyUrl }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "node-log-submitted",
+      "name": "Log: AUTO_SUBMITTED",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        2700,
+        200
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "CRED_GSHEETS",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Human Review",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ new Date().toISOString() }}",
+            "Status": "AWAITING_REVIEW",
+            "Company": "={{ $json.company }}",
+            "Role": "={{ $json.title }}",
+            "Location": "={{ $json.location }}",
+            "Score": "={{ $json.score }}",
+            "Justification": "={{ $json.justification }}",
+            "Est Salary USD": "={{ $json.estimatedSalaryUSD ?? 'Unknown' }}",
+            "Source": "={{ $json.source }}",
+            "ATS Keywords": "={{ ($json.atsKeywords  || []).join(', ') }}",
+            "Missing Skills": "={{ ($json.missingSkills|| []).join(', ') }}",
+            "Draft Cover Letter": "={{ $json.coverLetterParagraph }}",
+            "Target URL": "={{ $json.applyUrl }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "node-log-review",
+      "name": "Log: HUMAN_REVIEW",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        2460,
+        560
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "CRED_GSHEETS",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ new Date().toISOString() }}",
+            "Status": "LOW_SCORE_ARCHIVED",
+            "Company": "={{ $json.company }}",
+            "Role": "={{ $json.title }}",
+            "Location": "={{ $json.location }}",
+            "Score": "={{ $json.score }}",
+            "Source": "={{ $json.source }}",
+            "Target URL": "={{ $json.applyUrl }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "node-log-archive",
+      "name": "Log: LOW_SCORE",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        2460,
+        760
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "CRED_GSHEETS",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ new Date().toISOString() }}",
+            "Status": "REJECTED_NOT_REMOTE",
+            "Company": "={{ $json.company }}",
+            "Role": "={{ $json.title }}",
+            "Location": "={{ $json.location }}",
+            "Score": "={{ $json.score }}",
+            "Source": "={{ $json.source }}",
+            "Target URL": "={{ $json.applyUrl }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "node-log-not-remote",
+      "name": "Log: NOT_REMOTE",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        2220,
+        760
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "CRED_GSHEETS",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://hooks.slack.com/services/YOUR_SLACK_WEBHOOK",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"*Remote Job Bot — Run Complete* ✅\\n\\n*Time:* {{ new Date().toISOString() }}\\n\\nCheck your Google Sheet:\\n• *Sheet1* — AUTO_SUBMITTED rows added this run\\n• *Human Review* tab — score 6-7 roles with draft cover letters\\n\\nSources checked this run:\\nLinkedIn · Indeed · Dice · Google Jobs · Remotive · Arbeitnow · Jobicy · WWR x2\"\n}",
+        "options": {}
+      },
+      "id": "node-slack",
+      "name": "Slack Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2700,
+        400
+      ],
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "connections": {
+    "Every 24 Hours": {
+      "main": [
+        [
+          {
+            "node": "Load Already-Applied URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every 6 Hours": {
+      "main": [
+        [
+          {
+            "node": "Load Already-Applied URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Already-Applied URLs": {
+      "main": [
+        [
+          {
+            "node": "Start LinkedIn Scraper",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Start Indeed Scraper",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Start Dice Scraper",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Jobs via SerpAPI",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Remotive API",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Arbeitnow API",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Jobicy API",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "WWR DevOps RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "WWR Programming RSS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start LinkedIn Scraper": {
+      "main": [
+        [
+          {
+            "node": "Poll Apify + Merge All Sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start Indeed Scraper": {
+      "main": [
+        [
+          {
+            "node": "Poll Apify + Merge All Sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start Dice Scraper": {
+      "main": [
+        [
+          {
+            "node": "Poll Apify + Merge All Sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Jobs via SerpAPI": {
+      "main": [
+        [
+          {
+            "node": "Poll Apify + Merge All Sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remotive API": {
+      "main": [
+        [
+          {
+            "node": "Poll Apify + Merge All Sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Arbeitnow API": {
+      "main": [
+        [
+          {
+            "node": "Poll Apify + Merge All Sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jobicy API": {
+      "main": [
+        [
+          {
+            "node": "Poll Apify + Merge All Sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WWR DevOps RSS": {
+      "main": [
+        [
+          {
+            "node": "Poll Apify + Merge All Sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WWR Programming RSS": {
+      "main": [
+        [
+          {
+            "node": "Poll Apify + Merge All Sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poll Apify + Merge All Sources": {
+      "main": [
+        [
+          {
+            "node": "Normalise + Dedup + Remote Filter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 30s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 30s": {
+      "main": [
+        [
+          {
+            "node": "Poll Apify + Merge All Sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalise + Dedup + Remote Filter": {
+      "main": [
+        [
+          {
+            "node": "Skip If No New Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip If No New Jobs": {
+      "main": [
+        [
+          {
+            "node": "Claude AI — Score + Cover Letter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Claude AI — Score + Cover Letter": {
+      "main": [
+        [
+          {
+            "node": "Parse Claude Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Claude Response": {
+      "main": [
+        [
+          {
+            "node": "Is Remote Verified?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Remote Verified?": {
+      "main": [
+        [
+          {
+            "node": "Score ≥ 8 — Auto Apply?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log: NOT_REMOTE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score ≥ 8 — Auto Apply?": {
+      "main": [
+        [
+          {
+            "node": "Playwright Apply Engine",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Score 6-7 — Review Queue?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score 6-7 — Review Queue?": {
+      "main": [
+        [
+          {
+            "node": "Log: HUMAN_REVIEW",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log: LOW_SCORE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Playwright Apply Engine": {
+      "main": [
+        [
+          {
+            "node": "Log: AUTO_SUBMITTED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log: AUTO_SUBMITTED": {
+      "main": [
+        [
+          {
+            "node": "Slack Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log: HUMAN_REVIEW": {
+      "main": [
+        [
+          {
+            "node": "Slack Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}
